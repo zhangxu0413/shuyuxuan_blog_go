@@ -1,0 +1,8 @@
+#================================ mysql ======================================
+#  mysql配置
+mysql:
+  host: 118.25.228.199
+  port: 3306
+  name: shuyuxuan_test
+  user: zhangshuyu
+  password: 654321
