@@ -18,17 +18,19 @@ type iUser interface {
 
 type UserModel struct {}
 
-var DB = Mysql.DB
+var DB = Mysql.GetDB()
 
 func (m UserModel) AddUser(user Types.User) error {
 	var err error
-	fmt.Printf("%v", user)
-	//if !DB.HasTable(&Types.User{}) {
-	//	if err = DB.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&Types.User{}).Error; err != nil {
-	//		panic(err)
-	//	}
-	//}
-	DB.AutoMigrate(&Types.User {})
-	//DB.Create(user)
+	DB.AutoMigrate(&Types.User{})
+	DB.Create(&user)
+	return err
+}
+
+func (m UserModel) UpdateUser(user Types.User) error {
+	var err error
+	if err := DB.Save(&user).Error; err != nil {
+		fmt.Errorf("Save user failed, err: %+v\n", err)
+	}
 	return err
 }

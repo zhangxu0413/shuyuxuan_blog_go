@@ -17,17 +17,24 @@ type UserServer struct {
 
 func (s UserServer) UpsertUser(req Types.UserReq) error {
 	newUser := Types.User{}
-	if req.Id != 0 {
-		newUser.ID = req.Id
-	}
+
 	newUser.Name = req.Name
 	newUser.Mail = req.Mail
 	newUser.Phone = req.Phone
 	newUser.Description = req.Description
-	newUser.Status = 1
-	t := time.Now()
-	newUser.CreatedAt = t.Format("2006-01-02 15:04:05")
-	var err error
-	err = userModel.AddUser(newUser)
-	return err
+	// 修改用户
+	if req.Id != 0 {
+		newUser.ID = req.Id
+		var err error
+		err = userModel.UpdateUser(newUser)
+		return err
+	} else {
+		// 新增用户
+		newUser.Status = 1
+		t := time.Now()
+		newUser.CreatedAt = t.Format("2006-01-02 15:04:05")
+		var err error
+		err = userModel.AddUser(newUser)
+		return err
+	}
 }

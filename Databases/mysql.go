@@ -6,6 +6,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
+	"time"
 )
 
 // DatabaseConfig 数据库配置
@@ -21,37 +23,39 @@ type Config struct {
 }
 var DB *gorm.DB
 
-// Init 初始化数据库
-func Init()  {
+// GetDB 初始化数据库
+func GetDB() *gorm.DB  {
 	var conf Config
 	conf.getConf()
 	databaseConfig := conf.Mysql
 	databaseConfigStr := databaseConfig.User + ":" + databaseConfig.Password + "@tcp(" + databaseConfig.Host + ":" + databaseConfig.Port + ")/" + databaseConfig.Name
-	var err error
-	DB, err = gorm.Open("mysql", databaseConfigStr)
-	DB.SingularTable(true)
+	db, err := gorm.Open("mysql", databaseConfigStr)
+	db.SingularTable(true)
 	if err != nil {
 		fmt.Printf("mysql connect error %v", err)
 	}
-	if DB.Error != nil {
+	if db.Error != nil {
 		fmt.Printf("database error %v", DB.Error)
 	}
-	defer DB.Close()
-
-	//if !DB.HasTable(&Like{}) {
-	//	if err := DB.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8").CreateTable(&Like{}).Error; err != nil {
-	//		panic(err)
-	//	}
-	//}
-	//DB.AutoMigrate(&Like {})
-	//l1 := &Like{2, "192.168.150.18","Test", "测试",1231,time.Now() }
-	//DB.Create(&l1)
+	db.DB().SetMaxIdleConns(50)
+	//打开
+	db.DB().SetMaxOpenConns(100)
+	//超时
+	db.DB().SetConnMaxLifetime(time.Second * 30)
+	DB = db
+	return db
 }
 
 //读取Yaml配置文件,并转换成conf对象
 func (c *Config) getConf() *Config {
+	var confUrl string
+	if os.Getenv("GO_ENV") == "release"  {
+		confUrl = "/build/config/config.release.yaml"
+	} else {
+		confUrl = "./Config/config.dev.yaml"
+	}
 	//应该是 绝对地址
-	yamlFile, err :=ioutil.ReadFile("./Config/config.yaml")
+	yamlFile, err :=ioutil.ReadFile(confUrl)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
