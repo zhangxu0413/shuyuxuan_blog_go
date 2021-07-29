@@ -2,7 +2,6 @@ package Models
 
 import (
 	"fmt"
-	Mysql "shuyuxuan_blog_go/Databases"
 	"shuyuxuan_blog_go/Types"
 )
 
@@ -17,8 +16,6 @@ type iUser interface {
 }
 
 type UserModel struct {}
-
-var DB = Mysql.GetDB()
 
 func (m UserModel) AddUser(user Types.User) error {
 	var err error

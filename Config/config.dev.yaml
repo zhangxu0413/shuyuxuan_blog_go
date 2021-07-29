@@ -6,3 +6,6 @@ mysql:
   name: shuyuxuan_test
   user: zhangshuyu
   password: 654321
+translate:
+  appid: 20210727000899584
+  secret: ofYIh1a5qfWw3FAnpNBS
