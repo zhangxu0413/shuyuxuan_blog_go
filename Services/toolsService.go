@@ -23,7 +23,7 @@ type Config struct {
 	Translate TranslateConfig `yaml:"translate"`
 }
 
-func (d ToolsService) Translate(query Types.TranslateReq)  {
+func (d ToolsService) Translate(query Types.TranslateReq) map[string]interface{} {
 	// 拉配置
 	var conf Config
 	conf.getConf()
@@ -39,8 +39,9 @@ func (d ToolsService) Translate(query Types.TranslateReq)  {
 	params.Set("sign",Utils.Md5(translateConf.Appid + query.Query + salt + translateConf.Secret))
 	Url.RawQuery = params.Encode()
 	urlPath := Url.String()
-	log.Printf("%s", Utils.HttpGet(urlPath))
-	//Utils.HttpGet(urlPath)
+	log.Println(urlPath)
+	res := Utils.HttpGet(urlPath)
+	return res
 }
 //读取Yaml配置文件,并转换成conf对象
 func (c *Config) getConf() *Config {

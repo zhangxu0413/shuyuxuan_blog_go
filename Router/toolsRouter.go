@@ -12,10 +12,8 @@ func initToolsRouter()  {
 	r.POST("/api/tools/translate", func(c *gin.Context) {
 		var t Types.TranslateReq = Types.TranslateReq{}
 		c.BindJSON(&t)
-		log.Printf("%v",&t)
-		toolsService.Translate(t)
-		c.JSON(200, gin.H{
-			"msg": "更新用户信息失败",
-		})
+		res := toolsService.Translate(t)
+		log.Printf("%v",&res)
+		c.JSON(200, res)
 	})
 }
